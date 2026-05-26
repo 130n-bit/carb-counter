@@ -53,6 +53,8 @@ export const MEAL_GLYPH = {
   Snack: 's',
 }
 
+export const RECENT_TOTALS = [168, 142, 215, 195, 132, 158]
+
 export const QUICK_FOODS = [
   { id: 'q1', name: 'Apple', glyph: 'a', carbs: 25, base: 25, units: ['small', 'medium', 'large'], unitVals: [20, 25, 31], defaultUnit: 1 },
   { id: 'q2', name: 'Coffee · oat milk', glyph: 'c', carbs: 8, base: 8, units: ['short', 'tall', 'grande'], unitVals: [5, 8, 12], defaultUnit: 1 },
