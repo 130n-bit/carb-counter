@@ -57,7 +57,7 @@ body {
 .crumb {
   width: 390px;
   height: 820px;
-  background: var(--paper);
+  background: #b5c9aa;
   color: var(--ink);
   font-family: var(--font-sans);
   display: flex;
@@ -73,6 +73,7 @@ body {
   .app-shell { padding: 0; min-height: 100dvh; }
   .crumb { width: 100%; height: 100dvh; border-radius: 0; box-shadow: none; }
   body { background: #b5c9aa; }
+  .crumb { background: #b5c9aa; }
 }
 
 .crumb-scroll {
