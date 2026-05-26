@@ -9,7 +9,7 @@ import { You } from './screens/You.jsx'
 import {
   SEED_MEALS, MEAL_GLYPH, MEAL_TONE,
   loadCustomFoods, saveCustomFoods,
-  loadMeals, saveMeals,
+  loadHistory, loadTodayMeals, saveTodayMeals,
   loadFavourites, saveFavourites,
 } from './data.js'
 
@@ -44,7 +44,8 @@ const Toast = ({ message, onUndo }) => (
 
 export default function App() {
   const [tab, setTab] = useState('today')
-  const [meals, setMeals] = useState(() => loadMeals() || SEED_MEALS)
+  const [meals, setMeals] = useState(() => loadTodayMeals() || SEED_MEALS)
+  const [history, setHistory] = useState(() => loadHistory())
   const [sheetFood, setSheetFood] = useState(null)
   const [toast, setToast] = useState(null)
   const [addFocus, setAddFocus] = useState(false)
@@ -53,7 +54,10 @@ export default function App() {
   const [favourites, setFavourites] = useState(() => loadFavourites())
 
   // Persist meals whenever they change
-  useEffect(() => { saveMeals(meals) }, [meals])
+  useEffect(() => {
+    saveTodayMeals(meals)
+    setHistory(loadHistory())
+  }, [meals])
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -167,7 +171,7 @@ export default function App() {
         )}
 
         {tab === 'insights' && (
-          <Insights todayTotal={todayTotal}/>
+          <Insights todayTotal={todayTotal} history={history}/>
         )}
 
         {tab === 'you' && (

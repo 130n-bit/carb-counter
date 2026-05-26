@@ -68,11 +68,70 @@ export const MEAL_CHOICES = [
   { id: 'dinner', label: 'Dinner', glyph: 'd' },
 ]
 
-export const RECENT_TOTALS = [168, 142, 215, 195, 132, 158]
+// Returns today's date as YYYY-MM-DD
+export const todayKey = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
-const CUSTOM_KEY = 'crumb.customFoods'
-const MEALS_KEY = 'crumb.meals'
-const FAVS_KEY = 'crumb.favourites'
+const HISTORY_KEY = 'crumb.history'
+const CUSTOM_KEY  = 'crumb.customFoods'
+const FAVS_KEY    = 'crumb.favourites'
+
+// --- History (31-day meal log) ---
+
+const pruneOldEntries = (history) => {
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - 31)
+  cutoff.setHours(0, 0, 0, 0)
+  const pruned = {}
+  for (const [key, val] of Object.entries(history)) {
+    if (new Date(key) >= cutoff) pruned[key] = val
+  }
+  return pruned
+}
+
+export const loadHistory = () => {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw) || {}
+  } catch { return {} }
+}
+
+export const saveHistory = (history) => {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(pruneOldEntries(history)))
+  } catch {}
+}
+
+export const loadTodayMeals = () => {
+  // Migrate from old single-day key if present
+  try {
+    const oldRaw = localStorage.getItem('crumb.meals')
+    if (oldRaw) {
+      const old = JSON.parse(oldRaw)
+      if (old?.date === new Date().toDateString() && Array.isArray(old?.meals)) {
+        const history = loadHistory()
+        history[todayKey()] = old.meals
+        saveHistory(history)
+        localStorage.removeItem('crumb.meals')
+        return old.meals
+      }
+      localStorage.removeItem('crumb.meals')
+    }
+  } catch {}
+  const history = loadHistory()
+  return history[todayKey()] || null
+}
+
+export const saveTodayMeals = (meals) => {
+  const history = loadHistory()
+  history[todayKey()] = meals
+  saveHistory(history)
+}
+
+// --- Custom foods ---
 
 export const loadCustomFoods = () => {
   try {
@@ -87,22 +146,7 @@ export const saveCustomFoods = (foods) => {
   try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(foods)) } catch {}
 }
 
-export const loadMeals = () => {
-  try {
-    const raw = localStorage.getItem(MEALS_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    // Only restore if saved today
-    if (parsed?.date !== new Date().toDateString()) return null
-    return Array.isArray(parsed?.meals) ? parsed.meals : null
-  } catch { return null }
-}
-
-export const saveMeals = (meals) => {
-  try {
-    localStorage.setItem(MEALS_KEY, JSON.stringify({ date: new Date().toDateString(), meals }))
-  } catch {}
-}
+// --- Favourites ---
 
 export const loadFavourites = () => {
   try {
