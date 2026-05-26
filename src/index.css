@@ -543,7 +543,7 @@ body {
 }
 
 /* Insights */
-.c-week { background: var(--paper); border: 1px solid var(--stone-200); border-radius: 22px; padding: 20px; margin-bottom: 16px; }
+.c-week { background: rgba(255,255,255,0.15); border-radius: 22px; padding: 16px 20px 20px; margin: 0 16px 16px; }
 .c-week-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
 .c-week-title { font-family: var(--font-serif); font-size: 20px; font-style: italic; }
 .c-week-avg-num { font-family: var(--font-serif); font-size: 28px; letter-spacing: -0.02em; }
@@ -670,24 +670,46 @@ body {
   background: rgba(255,255,255,0.18); border-radius: 14px;
   overflow: hidden;
 }
+.c-hist-day.is-open { background: rgba(255,255,255,0.22); }
 .c-hist-day-row {
   display: flex; align-items: center; width: 100%;
   padding: 14px 16px; gap: 10px;
   background: none; border: none; cursor: pointer; text-align: left;
 }
-.c-hist-day-date { flex: 1; font-size: 14px; font-weight: 600; color: #fff; }
-.c-hist-day-total { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.9); margin-right: 6px; }
+.c-hist-day-left { flex: 1; }
+.c-hist-day-date { font-size: 14px; font-weight: 600; color: #fff; }
+.c-hist-day-full { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; letter-spacing: 0.01em; }
+.c-hist-day-total { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9); margin-right: 6px; white-space: nowrap; }
 .c-hist-chev { color: rgba(255,255,255,0.5); transition: transform 200ms var(--ease); display: flex; }
 .c-hist-chev.is-open { transform: rotate(180deg); }
-.c-hist-meals { padding: 0 16px 14px; border-top: 1px solid rgba(255,255,255,0.1); }
-.c-hist-meal { margin-top: 10px; }
-.c-hist-meal-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+.c-hist-meals { padding: 0 16px 14px; border-top: 1px solid rgba(255,255,255,0.12); }
+.c-hist-meal { margin-top: 12px; }
+.c-hist-meal-head {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-bottom: 6px;
+}
+.c-hist-meal-name { font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+.c-hist-meal-time { font-size: 12px; color: rgba(255,255,255,0.5); flex: 1; }
+.c-hist-meal-sub { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); white-space: nowrap; }
 .c-hist-item {
-  display: flex; justify-content: space-between;
-  font-size: 13px; color: rgba(255,255,255,0.85);
-  padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 .c-hist-item:last-child { border-bottom: none; }
+.c-hist-item-name { font-size: 13px; color: rgba(255,255,255,0.82); }
+.c-hist-item-carbs { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); white-space: nowrap; margin-left: 12px; }
+.c-hist-day-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 14px; padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;
+}
+.c-hist-day-footer-num { font-size: 18px; color: #fff; }
+.c-hist-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 48px 24px; color: rgba(255,255,255,0.45); font-size: 14px; text-align: center;
+}
 
 .c-section-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
 
