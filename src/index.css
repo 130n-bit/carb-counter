@@ -36,7 +36,7 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  background: #e8e2d8;
+  background: #b5c9aa;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -72,7 +72,7 @@ body {
 @media (max-width: 480px) {
   .app-shell { padding: 0; min-height: 100dvh; }
   .crumb { width: 100%; height: 100dvh; border-radius: 0; box-shadow: none; }
-  body { background: var(--paper); }
+  body { background: #b5c9aa; }
 }
 
 .crumb-scroll {
