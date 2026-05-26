@@ -97,15 +97,17 @@ body {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.02em;
+  color: #fff;
 }
-.c-greeting em { font-style: italic; color: var(--ink-soft); }
-.c-date { font-size: 13px; color: var(--stone-600); margin-top: 4px; }
+.c-greeting em { font-style: italic; color: rgba(255,255,255,0.75); }
+.c-date { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; }
 .c-avatar {
   width: 40px; height: 40px; border-radius: 50%;
-  background: var(--sage-soft);
+  background: rgba(255,255,255,0.25);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-serif); font-style: italic; font-size: 18px;
-  border: 1.5px solid var(--ink); flex-shrink: 0; cursor: pointer;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.5); flex-shrink: 0; cursor: pointer;
 }
 
 /* Hero card */
@@ -199,26 +201,26 @@ body {
 /* Search */
 .c-search {
   display: flex; align-items: center; gap: 10px;
-  background: var(--paper); border: 1.5px solid var(--stone-200);
+  background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.4);
   border-radius: 16px; padding: 14px 16px; margin-bottom: 18px;
   cursor: pointer;
   transition: border-color var(--duration-base) var(--ease);
 }
-.c-search:hover { border-color: var(--stone-300); }
-.c-search:focus-within { border-color: var(--sun-deep); }
+.c-search:hover { border-color: rgba(255,255,255,0.6); }
+.c-search:focus-within { border-color: rgba(255,255,255,0.8); }
 .c-search input {
   flex: 1; border: 0; outline: 0; background: transparent;
   font-family: var(--font-sans); font-size: 16px; font-weight: 500;
-  color: var(--ink); min-width: 0;
+  color: #fff; min-width: 0;
 }
-.c-search input::placeholder { color: var(--stone-500); }
-.c-search-icon { color: var(--stone-500); flex-shrink: 0; }
+.c-search input::placeholder { color: rgba(255,255,255,0.6); }
+.c-search-icon { color: rgba(255,255,255,0.8); flex-shrink: 0; }
 .c-search-trailing { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .c-search-icon-btn {
   width: 32px; height: 32px; border-radius: 10px;
-  background: var(--paper-deep); border: 0;
+  background: rgba(255,255,255,0.2); border: 0;
   display: flex; align-items: center; justify-content: center;
-  color: var(--ink); cursor: pointer;
+  color: #fff; cursor: pointer;
 }
 
 /* Quick chips */
@@ -229,18 +231,18 @@ body {
 .c-quick-row::-webkit-scrollbar { display: none; }
 .c-quick {
   flex-shrink: 0; display: flex; align-items: center; gap: 8px;
-  background: var(--paper); border: 1.5px solid var(--stone-200);
+  background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.4);
   border-radius: 999px; padding: 8px 14px 8px 10px;
   font-family: var(--font-sans); font-size: 13px; font-weight: 600;
-  color: var(--ink); cursor: pointer;
+  color: #fff; cursor: pointer;
 }
-.c-quick:hover { border-color: var(--stone-300); background: var(--paper-deep); }
+.c-quick:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.35); }
 .c-quick-glyph {
   width: 24px; height: 24px; border-radius: 999px;
-  background: var(--paper-deep); display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-serif); font-style: italic; font-size: 14px;
+  background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-style: italic; font-size: 14px; color: #fff;
 }
-.c-quick-carbs { color: var(--stone-600); font-weight: 500; font-family: var(--font-mono); font-size: 11px; }
+.c-quick-carbs { color: rgba(255,255,255,0.7); font-weight: 500; font-family: var(--font-mono); font-size: 11px; }
 
 /* Section head */
 .c-section-head {
@@ -249,9 +251,9 @@ body {
 }
 .c-section-title {
   font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; margin: 0;
+  text-transform: uppercase; margin: 0; color: rgba(255,255,255,0.9);
 }
-.c-section-action { font-size: 13px; font-weight: 600; color: var(--ink-soft); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.c-section-action { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.65); cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
 /* Meal card */
 .c-meal {
@@ -282,28 +284,28 @@ body {
 .c-meal-item-carbs { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--stone-600); flex-shrink: 0; }
 
 .c-empty-log {
-  border: 1.5px dashed var(--stone-200); border-radius: 18px;
+  border: 1.5px dashed rgba(255,255,255,0.4); border-radius: 18px;
   padding: 24px 20px; text-align: center; margin-bottom: 10px;
-  color: var(--stone-600); font-size: 14px;
+  color: rgba(255,255,255,0.75); font-size: 14px;
 }
 .c-empty-log em { font-family: var(--font-serif); font-style: italic; }
 
 /* Suggest card */
 .c-suggest {
-  background: var(--paper); border: 1.5px dashed var(--stone-300);
+  background: rgba(255,255,255,0.25); border: 1.5px dashed rgba(255,255,255,0.45);
   border-radius: 22px; padding: 18px;
   display: flex; align-items: center; gap: 14px;
   margin-bottom: 10px; cursor: pointer;
 }
-.c-suggest:hover { border-color: var(--ink-soft); background: var(--paper-deep); }
+.c-suggest:hover { border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.35); }
 .c-suggest-icon {
   width: 36px; height: 36px; border-radius: 12px;
-  background: var(--paper-deep); display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+  background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #fff;
 }
 .c-suggest-body { flex: 1; min-width: 0; }
-.c-suggest-title { font-size: 14px; font-weight: 600; }
-.c-suggest-sub { font-size: 12px; color: var(--stone-600); margin-top: 2px; }
+.c-suggest-title { font-size: 14px; font-weight: 600; color: #fff; }
+.c-suggest-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
 
 /* Tab bar */
 .c-tabs {
@@ -328,28 +330,28 @@ body {
 .c-add-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .c-back-btn {
   width: 40px; height: 40px; border-radius: 999px;
-  background: var(--paper-deep); border: 0;
+  background: rgba(255,255,255,0.25); border: 0;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--ink); flex-shrink: 0;
+  cursor: pointer; color: #fff; flex-shrink: 0;
 }
-.c-add-title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.01em; }
+.c-add-title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.01em; color: #fff; }
 
 .c-input-tools { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 22px; }
 .c-tool {
-  background: var(--paper); border: 1.5px solid var(--stone-200);
+  background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.4);
   border-radius: 18px; padding: 14px 10px;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   cursor: pointer;
 }
-.c-tool:hover { border-color: var(--stone-300); background: var(--paper-deep); }
+.c-tool:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.35); }
 .c-tool-icon {
   width: 36px; height: 36px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; color: #fff;
 }
-.c-tool-icon.t-sun  { background: var(--sun-wash); }
-.c-tool-icon.t-sage { background: var(--sage-soft); }
-.c-tool-icon.t-clay { background: var(--clay-soft); }
-.c-tool-label { font-size: 12px; font-weight: 600; }
+.c-tool-icon.t-sun  { background: rgba(255,255,255,0.2); }
+.c-tool-icon.t-sage { background: rgba(255,255,255,0.2); }
+.c-tool-icon.t-clay { background: rgba(255,255,255,0.2); }
+.c-tool-label { font-size: 12px; font-weight: 600; color: #fff; }
 
 /* FoodImage */
 .c-food-img {
@@ -364,16 +366,16 @@ body {
 /* Result rows */
 .c-result {
   display: flex; align-items: center; gap: 14px;
-  padding: 14px 4px; border-bottom: 1px solid var(--stone-100); cursor: pointer;
+  padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,0.2); cursor: pointer;
 }
 .c-result:last-child { border-bottom: 0; }
-.c-result:hover { background: var(--paper-deep); margin: 0 -8px; padding: 14px 12px; border-radius: 14px; border-bottom-color: transparent; }
+.c-result:hover { background: rgba(255,255,255,0.15); margin: 0 -8px; padding: 14px 12px; border-radius: 14px; border-bottom-color: transparent; }
 .c-result-body { flex: 1; min-width: 0; }
-.c-result-name { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
-.c-result-sub { font-size: 12px; color: var(--stone-600); margin-top: 2px; }
+.c-result-name { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; color: #fff; }
+.c-result-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
 .c-result-carbs { text-align: right; flex-shrink: 0; }
-.c-result-carbs-num { font-family: var(--font-serif); font-size: 20px; letter-spacing: -0.02em; font-feature-settings: "tnum" 1; }
-.c-result-carbs-unit { font-size: 11px; font-weight: 600; color: var(--stone-600); margin-left: 2px; }
+.c-result-carbs-num { font-family: var(--font-serif); font-size: 20px; letter-spacing: -0.02em; font-feature-settings: "tnum" 1; color: #fff; }
+.c-result-carbs-unit { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.65); margin-left: 2px; }
 
 /* Favourite button */
 .c-fav-btn {
@@ -401,28 +403,28 @@ body {
 
 .c-add-attrib {
   margin-top: 18px; padding: 14px 16px;
-  border-top: 1px solid var(--stone-100);
-  font-size: 11px; line-height: 1.5; color: var(--stone-500); text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  font-size: 11px; line-height: 1.5; color: rgba(255,255,255,0.55); text-align: center;
 }
-.c-add-attrib em { font-family: var(--font-serif); font-style: italic; color: var(--ink-soft); }
+.c-add-attrib em { font-family: var(--font-serif); font-style: italic; color: rgba(255,255,255,0.75); }
 
 /* Add by hand row */
 .c-add-byhand-row {
   display: flex; align-items: center; gap: 14px;
-  padding: 16px; border: 1.5px dashed var(--stone-200);
+  padding: 16px; border: 1.5px dashed rgba(255,255,255,0.4);
   border-radius: 18px; margin-top: 14px;
-  background: transparent; cursor: pointer; width: 100%;
+  background: rgba(255,255,255,0.15); cursor: pointer; width: 100%;
   text-align: left;
 }
-.c-add-byhand-row:hover { border-color: var(--stone-400); background: var(--paper-deep); }
+.c-add-byhand-row:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.25); }
 .c-add-byhand-icon {
   width: 36px; height: 36px; border-radius: 12px;
-  background: var(--sun-wash); display: flex; align-items: center; justify-content: center;
-  color: var(--ink); flex-shrink: 0;
+  background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
 }
 .c-add-byhand-body { flex: 1; min-width: 0; }
-.c-add-byhand-title { font-size: 14px; font-weight: 600; }
-.c-add-byhand-sub { font-size: 12px; color: var(--stone-600); margin-top: 2px; }
+.c-add-byhand-title { font-size: 14px; font-weight: 600; color: #fff; }
+.c-add-byhand-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
 
 /* Portion sheet */
 .c-sheet-backdrop {
@@ -587,7 +589,7 @@ body {
 }
 .c-profile-name { font-family: var(--font-serif); font-size: 22px; letter-spacing: -0.01em; }
 .c-profile-sub { font-size: 13px; color: var(--stone-600); margin-top: 2px; }
-.c-set-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--stone-600); padding: 0 4px 8px; margin-top: 18px; }
+.c-set-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.7); padding: 0 4px 8px; margin-top: 18px; }
 .c-set-group { background: var(--paper); border: 1px solid var(--stone-200); border-radius: 22px; overflow: hidden; }
 .c-set-row { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--stone-100); cursor: pointer; }
 .c-set-row:last-child { border-bottom: 0; }
