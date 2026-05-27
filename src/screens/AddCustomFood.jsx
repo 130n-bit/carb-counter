@@ -18,44 +18,47 @@ const dataUrlMediaType = (url) => {
   return m ? m[1] : 'image/jpeg'
 }
 
-async function scanNutritionLabel(dataUrl) {
-  if (!window.claude?.complete) {
-    throw new Error('Label scanning is not available in this environment. Please fill in the values manually.')
-  }
-
-  const prompt = `You are reading a UK or international food nutrition label.
-
-Return ONLY a JSON object (no prose, no markdown, no code fence) with this exact shape:
-{
-  "carbs_per_100g": <number or null>,
-  "carbs_per_serving": <number or null>,
-  "serving_size_g": <number or null>,
-  "product_name": <string or null>
-}
-
-Rules:
-- "carbs" means total "Carbohydrate" — NOT "of which sugars".
-- If a value isn't visible or readable, use null.
-- serving_size_g should be the grams in one serving (e.g. "Per 30g" → 30).
-- product_name only if clearly printed on this image; otherwise null.
-- Numbers: no units in the values; just the number.`
-
-  const result = await window.claude.complete({
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'image', source: { type: 'base64', media_type: dataUrlMediaType(dataUrl), data: dataUrlToBase64(dataUrl) } },
-        { type: 'text', text: prompt },
-      ],
-    }],
+// Compress + resize before sending — phone photos can be 4–8 MB
+const compressImage = (dataUrl, maxDim = 1400, quality = 0.82) =>
+  new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height))
+      const canvas = document.createElement('canvas')
+      canvas.width  = Math.round(img.width  * scale)
+      canvas.height = Math.round(img.height * scale)
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.src = dataUrl
   })
 
-  const text = typeof result === 'string' ? result : (result?.text || '')
-  const match = text.match(/\{[\s\S]*\}/)
-  if (!match) throw new Error("Couldn't read that label — try a clearer photo.")
+async function scanNutritionLabel(dataUrl) {
+  const compressed = await compressImage(dataUrl)
+
+  const res = await fetch('/api/scan-label', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      imageData: dataUrlToBase64(compressed),
+      mediaType: 'image/jpeg',
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    if (err.error?.includes('ANTHROPIC_API_KEY')) {
+      throw new Error('Label scanning is not set up yet — add the API key to your Vercel settings.')
+    }
+    throw new Error("Couldn't reach the scanning service. Try again.")
+  }
+
+  const { text } = await res.json()
+  const match = text?.match(/\{[\s\S]*\}/)
+  if (!match) throw new Error("Couldn't read that label — try a clearer, well-lit photo.")
   let parsed
   try { parsed = JSON.parse(match[0]) }
-  catch { throw new Error("Couldn't read that label — try a clearer photo.") }
+  catch { throw new Error("Couldn't read that label — try a clearer, well-lit photo.") }
 
   return {
     carbsPer100g:    Number.isFinite(+parsed.carbs_per_100g)    ? +parsed.carbs_per_100g    : null,
