@@ -25,91 +25,94 @@ export const AVATAR_DEFAULTS = {
   bottomColor: '#2c3e50',
 }
 
-// ─── Main component ──────────────────────────────────────────────────────────
-// Layout (viewBox 0 0 200 330):
-//   Head:   y 26–164  (138px)
-//   Neck:   y 162–184 (22px)
-//   Torso:  y 184–256 (72px)
-//   Legs:   y 254–320 (66px)
-//   Shoes:  y ~322
+// ─── Coordinate reference ────────────────────────────────────────────────────
+//  viewBox 0 0 200 330 (full) / 0 0 200 232 (bust)
+//  Head     y  28 – 164  (136px)
+//  Neck     y 156 – 186  (neck top reaches inside head — no gap)
+//  Torso    y 182 – 258f / 264m  (trapezoid, straight sides)
+//  Legs     y 256 – 320
+//  Shoes    y 322
 
 export const AvatarSvg = ({ avatar = {}, width = 100, bust = false }) => {
-  const cfg = { ...AVATAR_DEFAULTS, ...avatar }
+  const cfg  = { ...AVATAR_DEFAULTS, ...avatar }
   const { gender, skinTone: sk, eyeColor: ec, hairStyle, hairColor: hc,
           topStyle, topColor: tc, bottomColor: bc } = cfg
   const fem  = gender !== 'male'
   const shoe = '#1c1a14'
-  const vb   = bust ? '0 0 200 235' : '0 0 200 330'
-  const ht   = bust ? Math.round(width * 235/200) : Math.round(width * 330/200)
+  const vb   = bust ? '0 0 200 232' : '0 0 200 330'
+  const ht   = bust ? Math.round(width * 232/200) : Math.round(width * 330/200)
 
   return (
     <svg viewBox={vb} width={width} height={ht} style={{ display:'block' }} aria-hidden="true">
 
-      {/* ── BACK HAIR — drawn first so head covers the face portion ── */}
+      {/* ── 1. BACK HAIR — drawn before everything so head covers face area ── */}
       <HairBack style={hairStyle} color={hc}/>
 
-      {/* ── SHOES & LEGS ─────────────────────────────── */}
+      {/* ── 2. SHOES & LEGS ─────────────────────────────────────────────── */}
       {!bust && <>
-        <ellipse cx={fem?74:72}  cy="322" rx="23" ry="8" fill={shoe}/>
-        <ellipse cx={fem?126:128} cy="322" rx="23" ry="8" fill={shoe}/>
+        <ellipse cx={fem?76:74}  cy="322" rx="22" ry="8" fill={shoe}/>
+        <ellipse cx={fem?124:126} cy="322" rx="22" ry="8" fill={shoe}/>
         {fem ? <>
-          <path d="M68 256 Q65 290 65 316 Q65 324 76 324 Q88 324 88 316 L88 256Z" fill={bc}/>
-          <path d="M132 256 Q135 290 135 316 Q135 324 124 324 Q112 324 112 316 L112 256Z" fill={bc}/>
+          {/* Female legs — slim, centered under hip */}
+          <path d="M58 258 L62 318 Q62 326 76 326 Q88 326 88 318 L84 258Z" fill={bc}/>
+          <path d="M142 258 L138 318 Q138 326 124 326 Q112 326 112 318 L116 258Z" fill={bc}/>
         </> : <>
-          <path d="M60 258 Q56 292 56 316 Q56 324 72 324 Q88 324 88 316 L88 258Z" fill={bc}/>
-          <path d="M140 258 Q144 292 144 316 Q144 324 128 324 Q112 324 112 316 L112 258Z" fill={bc}/>
+          {/* Male legs — wider, straight */}
+          <path d="M50 262 L52 318 Q52 326 72 326 Q88 326 88 318 L84 262Z" fill={bc}/>
+          <path d="M150 262 L148 318 Q148 326 128 326 Q112 326 112 318 L116 262Z" fill={bc}/>
         </>}
-        {/* Waistband */}
-        <rect x={fem?38:24} y="252" width={fem?124:152} height="8" rx="2" fill={bc}/>
-        <line x1={fem?38:24} y1="259" x2={fem?162:176} y2="259" stroke="rgba(0,0,0,0.13)" strokeWidth="1"/>
+        {/* Waistband sits right on the torso-leg join */}
+        <rect x={fem?44:30} y="253" width={fem?112:140} height="9" rx="2" fill={bc}/>
+        <line x1={fem?44:30} y1="261" x2={fem?156:170} y2="261" stroke="rgba(0,0,0,0.14)" strokeWidth="1"/>
       </>}
 
-      {/* ── ARMS ──────────────────────────────────────── */}
+      {/* ── 3. ARMS — drawn before torso so shoulder joint is covered ───── */}
       {fem ? <>
-        <path d="M34 218 Q18 246 16 272 Q14 292 24 298 Q35 303 40 287 L44 262 Q48 238 44 214Z" fill={tc}/>
-        <path d="M166 218 Q182 246 184 272 Q186 292 176 298 Q165 303 160 287 L156 262 Q152 238 156 214Z" fill={tc}/>
+        <path d="M12 200 Q2 234 2 264 Q0 284 12 292 Q24 298 30 281 L34 256 Q38 228 34 198Z" fill={tc}/>
+        <path d="M188 200 Q198 234 198 264 Q200 284 188 292 Q176 298 170 281 L166 256 Q162 228 166 198Z" fill={tc}/>
       </> : <>
-        <path d="M22 212 Q4 242 2 270 Q0 292 12 298 Q24 304 30 286 L36 260 Q40 232 38 208Z" fill={tc}/>
-        <path d="M178 212 Q196 242 198 270 Q200 292 188 298 Q176 304 170 286 L164 260 Q160 232 162 208Z" fill={tc}/>
+        <path d="M4 198 Q-4 234 -2 264 Q-2 286 10 294 Q22 300 28 283 L34 258 Q40 228 36 196Z" fill={tc}/>
+        <path d="M196 198 Q204 234 202 264 Q202 286 190 294 Q178 300 172 283 L166 258 Q160 228 164 196Z" fill={tc}/>
       </>}
 
       {/* Hands */}
-      <ellipse cx={fem?20:12}   cy="295" rx="13" ry="11" fill={sk}/>
-      <ellipse cx={fem?180:188} cy="295" rx="13" ry="11" fill={sk}/>
+      <ellipse cx={fem?12:8}   cy="289" rx="13" ry="11" fill={sk}/>
+      <ellipse cx={fem?188:192} cy="289" rx="13" ry="11" fill={sk}/>
 
-      {/* ── TORSO ─────────────────────────────────────── */}
+      {/* ── 4. TORSO — trapezoid: wide shoulder, straight sides, no nip ─── */}
       {fem ? (
-        // Hourglass: wide shoulders, nipped waist, gentle hip flare
-        <path d="M84 184 L44 197 Q18 214 20 244 Q22 262 42 270 Q62 278 82 279 L118 279 Q138 278 158 270 Q178 262 180 244 Q182 214 156 197 L116 184 Q108 189 100 187 Q92 189 84 184Z" fill={tc}/>
+        // Shoulders ~152px wide, hips ~116px, clean straight diagonal sides
+        <path d="M80 182 L22 202 L40 258 L160 258 L178 202 L120 182 Q108 187 100 185 Q92 187 80 182Z" fill={tc}/>
       ) : (
-        // Broad shoulders, straighter silhouette, wider at chest
-        <path d="M84 184 L28 196 Q2 212 2 242 Q2 262 24 272 Q48 281 74 283 L126 283 Q152 281 176 272 Q198 262 198 242 Q198 212 172 196 L116 184 Q108 189 100 187 Q92 189 84 184Z" fill={tc}/>
+        // Shoulders ~172px wide, hips ~136px
+        <path d="M80 182 L14 202 L32 264 L168 264 L186 202 L120 182 Q108 187 100 185 Q92 187 80 182Z" fill={tc}/>
       )}
 
-      {/* ── OUTFIT DETAILS ────────────────────────────── */}
+      {/* ── 5. OUTFIT DETAILS ─────────────────────────────────────────────── */}
       <TopDetail style={topStyle} tc={tc} sk={sk} fem={fem}/>
 
-      {/* ── EARS ──────────────────────────────────────── */}
+      {/* ── 6. EARS ───────────────────────────────────────────────────────── */}
       <ellipse cx="47"  cy="98" rx="12" ry="17" fill={sk}/>
       <ellipse cx="153" cy="98" rx="12" ry="17" fill={sk}/>
       <ellipse cx="47"  cy="98" rx="6"  ry="10" fill="rgba(0,0,0,0.06)"/>
       <ellipse cx="153" cy="98" rx="6"  ry="10" fill="rgba(0,0,0,0.06)"/>
 
-      {/* ── NECK ──────────────────────────────────────── */}
+      {/* ── 7. NECK — top starts at y=156, well inside head boundary ─────── */}
+      {/* Head at y=156 is ~x=78–122, neck top is x=82–118 → fully inside = no gap */}
       {fem
-        ? <path d="M88 162 Q84 174 84 184 L116 184 Q116 174 112 162 Q106 167 100 166 Q94 167 88 162Z" fill={sk}/>
-        : <path d="M86 162 Q80 172 80 184 L120 184 Q120 172 114 162 Q107 167 100 166 Q93 167 86 162Z" fill={sk}/>
+        ? <path d="M82 156 Q80 170 80 184 L120 184 Q120 170 118 156 Q110 161 100 160 Q90 161 82 156Z" fill={sk}/>
+        : <path d="M80 156 Q76 168 76 184 L124 184 Q124 168 120 156 Q112 161 100 160 Q88 161 80 156Z" fill={sk}/>
       }
 
-      {/* ── HEAD ──────────────────────────────────────── */}
-      <path d="M100 26 C154 26 157 70 153 96 C149 130 132 154 100 164 C68 154 51 130 47 96 C43 70 46 26 100 26Z" fill={sk}/>
+      {/* ── 8. HEAD ───────────────────────────────────────────────────────── */}
+      <path d="M100 28 C154 28 157 70 153 96 C149 130 132 154 100 164 C68 154 51 130 47 96 C43 70 46 28 100 28Z" fill={sk}/>
       {/* Jaw shadow */}
       <path d="M70 148 Q85 160 100 163 Q115 160 130 148" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="3"/>
 
-      {/* ── FRONT HAIR CAP — on top of scalp, face remains visible ── */}
+      {/* ── 9. FRONT HAIR CAP — scalp cover only, drawn after head ─────── */}
       <HairFront style={hairStyle} color={hc}/>
 
-      {/* ── FACE FEATURES ─────────────────────────────── */}
+      {/* ── 10. FACE ──────────────────────────────────────────────────────── */}
       {fem && <>
         <ellipse cx="57"  cy="114" rx="20" ry="11" fill="rgba(255,100,100,0.08)"/>
         <ellipse cx="143" cy="114" rx="20" ry="11" fill="rgba(255,100,100,0.08)"/>
@@ -118,21 +121,18 @@ export const AvatarSvg = ({ avatar = {}, width = 100, bust = false }) => {
       <Eye cx={76}  eyeColor={ec} female={fem}/>
       <Eye cx={124} eyeColor={ec} female={fem} flip/>
 
-      {/* Eyebrows */}
       {fem ? <>
-        <path d="M61 74 Q77 67 92 71"  fill="none" stroke={hc} strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M108 71 Q123 67 139 74" fill="none" stroke={hc} strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M61 75 Q77 68 92 72"  fill="none" stroke={hc} strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M108 72 Q123 68 139 75" fill="none" stroke={hc} strokeWidth="2.5" strokeLinecap="round"/>
       </> : <>
-        <path d="M59 77 Q76 72 92 75"   fill="none" stroke={hc} strokeWidth="4"   strokeLinecap="round"/>
-        <path d="M108 75 Q124 72 141 77" fill="none" stroke={hc} strokeWidth="4"   strokeLinecap="round"/>
+        <path d="M59 78 Q76 73 92 76"   fill="none" stroke={hc} strokeWidth="4"   strokeLinecap="round"/>
+        <path d="M108 76 Q124 73 141 78" fill="none" stroke={hc} strokeWidth="4"   strokeLinecap="round"/>
       </>}
 
-      {/* Nose */}
-      <path d="M100 102 Q97 116 95 122" fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M100 103 Q97 116 95 122" fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="1.5" strokeLinecap="round"/>
       <path d="M93 124 Q89 128 95 130"  fill="none" stroke="rgba(0,0,0,0.11)" strokeWidth="1.5" strokeLinecap="round"/>
       <path d="M107 124 Q111 128 105 130" fill="none" stroke="rgba(0,0,0,0.11)" strokeWidth="1.5" strokeLinecap="round"/>
 
-      {/* Lips */}
       {fem ? (<>
         <path d="M87 140 Q93 134 100 136 Q107 134 113 140"
               fill="none" stroke="rgba(175,60,60,0.65)" strokeWidth="1.8" strokeLinecap="round"/>
@@ -149,7 +149,7 @@ export const AvatarSvg = ({ avatar = {}, width = 100, bust = false }) => {
 // ─── Eye ────────────────────────────────────────────────────────────────────
 
 const Eye = ({ cx, eyeColor, female, flip = false }) => {
-  const x1 = cx - 14, x2 = cx + 14, cy = 88
+  const x1 = cx - 14, x2 = cx + 14, cy = 89
   const lashes = flip
     ? [[cx+12,cy-4,cx+15,cy-10],[cx+6,cy-7,cx+7,cy-13],[cx,cy-8,cx,cy-14],[cx-6,cy-7,cx-7,cy-13],[cx-12,cy-4,cx-15,cy-10]]
     : [[cx-12,cy-4,cx-15,cy-10],[cx-6,cy-7,cx-7,cy-13],[cx,cy-8,cx,cy-14],[cx+6,cy-7,cx+7,cy-13],[cx+12,cy-4,cx+15,cy-10]]
@@ -172,62 +172,48 @@ const Eye = ({ cx, eyeColor, female, flip = false }) => {
   )
 }
 
-// ─── Outfit details ──────────────────────────────────────────────────────────
+// ─── Outfit detail ───────────────────────────────────────────────────────────
 
 const TopDetail = ({ style, tc, sk, fem }) => {
-  const hemY  = fem ? 271 : 275
-  const pktY  = fem ? 235 : 238
+  const hemY = fem ? 250 : 256
+  const pktY = fem ? 230 : 234
   switch (style) {
     case 'tshirt':
       return <>
-        {/* Round neck opening */}
-        <ellipse cx="100" cy="185" rx="16" ry="7" fill={sk}/>
-        <path d="M84 185 Q92 193 100 191 Q108 193 116 185"
-              fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" strokeLinecap="round"/>
+        <ellipse cx="100" cy="183" rx="16" ry="7" fill={sk}/>
+        <path d="M84 183 Q92 191 100 189 Q108 191 116 183"
+              fill="none" stroke="rgba(0,0,0,0.09)" strokeWidth="1.5" strokeLinecap="round"/>
       </>
 
     case 'hoodie':
       return <>
-        {/* Hood seam */}
-        <path d="M80 184 L100 202 L120 184"
+        <path d="M80 182 L100 200 L120 182"
               fill="none" stroke="rgba(0,0,0,0.13)" strokeWidth="2.5" strokeLinecap="round"/>
-        {/* Kangaroo pocket */}
-        <rect x="76" y={pktY} width="48" height="32" rx="10" fill="rgba(0,0,0,0.08)"/>
-        <line x1="100" y1={pktY} x2="100" y2={pktY+32} stroke="rgba(0,0,0,0.06)" strokeWidth="1"/>
-        {/* Drawstrings */}
-        <path d="M96 196 Q94 212 91 228" stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-        <path d="M104 196 Q106 212 109 228" stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-        {/* Zip line */}
-        <path d="M100 202 L100 268" stroke="rgba(0,0,0,0.07)" strokeWidth="1" strokeLinecap="round" fill="none"/>
+        <rect x="76" y={pktY} width="48" height="30" rx="10" fill="rgba(0,0,0,0.08)"/>
+        <line x1="100" y1={pktY} x2="100" y2={pktY+30} stroke="rgba(0,0,0,0.05)" strokeWidth="1"/>
+        <path d="M97 194 Q95 212 92 228"  stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <path d="M103 194 Q105 212 108 228" stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <path d="M100 200 L100 260" stroke="rgba(0,0,0,0.06)" strokeWidth="1" strokeLinecap="round" fill="none"/>
       </>
 
     case 'polo':
       return <>
-        {/* Standing collar */}
-        <path d="M87 177 L87 191 Q87 197 100 197 Q113 197 113 191 L113 177 Q107 183 100 182 Q93 183 87 177Z" fill={tc}/>
-        <path d="M87 177 Q93 183 100 182 Q107 183 113 177"
+        <path d="M87 175 L87 191 Q87 197 100 197 Q113 197 113 191 L113 175 Q107 181 100 180 Q93 181 87 175Z" fill={tc}/>
+        <path d="M87 175 Q94 181 100 180 Q106 181 113 175"
               fill="none" stroke="rgba(0,0,0,0.14)" strokeWidth="1.5" strokeLinecap="round"/>
-        {/* Placket + buttons */}
         <line x1="100" y1="193" x2="100" y2={hemY} stroke="rgba(0,0,0,0.08)" strokeWidth="2"/>
-        {[202, 216, 230].map(y => <circle key={y} cx="100" cy={y} r="3" fill="rgba(0,0,0,0.14)"/>)}
+        {[202,216,230].map(y => <circle key={y} cx="100" cy={y} r="3" fill="rgba(0,0,0,0.14)"/>)}
       </>
 
     case 'jumper':
       return <>
-        {/* High round neck — taller collar than tshirt */}
-        <path d="M87 176 L87 192 Q94 197 100 196 Q106 197 113 192 L113 176 Q107 182 100 181 Q93 182 87 176Z" fill={tc}/>
-        <path d="M87 176 Q94 181 100 180 Q106 181 113 176"
+        <path d="M87 174 L87 191 Q94 196 100 195 Q106 196 113 191 L113 174 Q107 180 100 179 Q93 180 87 174Z" fill={tc}/>
+        <path d="M87 174 Q94 179 100 178 Q106 179 113 174"
               fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.2" strokeLinecap="round"/>
-        {/* Ribbed hem */}
         {[0,5,10].map(i => (
-          <line key={i} x1={fem?42:26} y1={hemY-8+i} x2={fem?158:174} y2={hemY-8+i}
+          <line key={i} x1={fem?42:26} y1={hemY+i} x2={fem?158:174} y2={hemY+i}
                 stroke="rgba(0,0,0,0.07)" strokeWidth="1.2"/>
         ))}
-        {/* Ribbed cuff suggestion on arms */}
-        <path d={fem ? 'M14 278 Q18 280 22 278' : 'M4 278 Q8 280 12 278'}
-              fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="2" strokeLinecap="round"/>
-        <path d={fem ? 'M178 278 Q182 280 186 278' : 'M188 278 Q192 280 196 278'}
-              fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="2" strokeLinecap="round"/>
       </>
 
     default: return null
@@ -235,47 +221,42 @@ const TopDetail = ({ style, tc, sk, fem }) => {
 }
 
 // ─── Hair ────────────────────────────────────────────────────────────────────
-// HairBack: drawn before the head — head (skin) covers the face portion naturally
-// HairFront: drawn after head — small cap covering the scalp only
+// HairBack: drawn first — the head (skin) is drawn later and covers the face.
+// HairFront: drawn after head — only covers the scalp cap (well above eyebrows).
 
 const HairBack = ({ style, color }) => {
   switch (style) {
-    // Female styles with hanging back hair
     case 'medium':
     case 'bob':
-      // Wraps around sides/back to jaw level; head overlaps and covers the face center
-      return <path d="M52 68 Q36 100 38 134 Q40 160 62 174 Q80 182 100 183 Q120 182 138 174 Q160 160 162 134 Q164 100 148 68 Q130 63 100 62 Q70 63 52 68Z" fill={color}/>
+      return <path d="M52 66 Q36 100 38 134 Q40 160 62 175 Q80 184 100 185 Q120 184 138 175 Q160 160 162 134 Q164 100 148 66 Q130 61 100 60 Q70 61 52 66Z" fill={color}/>
 
     case 'long':
-      return <path d="M52 68 Q36 100 36 136 Q38 164 58 178 L56 270 Q76 284 100 286 Q124 284 144 270 L142 178 Q162 164 164 136 Q164 100 148 68 Q130 63 100 62 Q70 63 52 68Z" fill={color}/>
+      return <path d="M52 66 Q34 102 34 138 Q36 166 56 180 L54 272 Q74 286 100 288 Q126 286 146 272 L144 180 Q164 166 166 138 Q166 102 148 66 Q130 61 100 60 Q70 61 52 66Z" fill={color}/>
 
     case 'wavy':
-      return <path d="M52 68 Q36 100 36 136 Q38 164 58 178 L52 208 Q40 228 46 248 Q52 268 50 286 Q64 300 100 303 Q136 300 150 286 Q148 268 154 248 Q160 228 148 208 L142 178 Q162 164 164 136 Q164 100 148 68 Q130 63 100 62 Q70 63 52 68Z" fill={color}/>
+      return <path d="M52 66 Q34 102 34 138 Q36 166 56 180 L50 212 Q38 232 44 252 Q50 272 48 290 Q62 304 100 307 Q138 304 152 290 Q150 272 156 252 Q162 232 150 212 L144 180 Q164 166 166 138 Q166 102 148 66 Q130 61 100 60 Q70 61 52 66Z" fill={color}/>
 
     case 'curly':
-      // Side puffs and lower puff — head will cover the face center
       return <>
-        <ellipse cx="26"  cy="96"  rx="30" ry="42" fill={color}/>
-        <ellipse cx="174" cy="96"  rx="30" ry="42" fill={color}/>
-        <ellipse cx="60"  cy="164" rx="26" ry="32" fill={color}/>
-        <ellipse cx="140" cy="164" rx="26" ry="32" fill={color}/>
-        <ellipse cx="100" cy="175" rx="42" ry="22" fill={color}/>
+        <ellipse cx="26"  cy="96"  rx="30" ry="44" fill={color}/>
+        <ellipse cx="174" cy="96"  rx="30" ry="44" fill={color}/>
+        <ellipse cx="58"  cy="166" rx="28" ry="32" fill={color}/>
+        <ellipse cx="142" cy="166" rx="28" ry="32" fill={color}/>
+        <ellipse cx="100" cy="177" rx="44" ry="22" fill={color}/>
       </>
 
-    // Male and short female styles have no significant back hair
     default: return null
   }
 }
 
 const HairFront = ({ style, color }) => {
-  // Base cap: covers scalp from top (y=26) to hairline (y=66) — well above eyebrows (y=74)
-  const cap = 'M100 26 C148 26 152 56 148 68 Q130 64 100 63 Q70 64 52 68 C48 56 52 26 100 26Z'
+  // Cap covers scalp from head top (y=28) to hairline (y=66) — 8px above eyebrows (y=75)
+  const cap = 'M100 28 C148 28 152 56 148 68 Q130 64 100 63 Q70 64 52 68 C48 56 52 28 100 28Z'
 
   switch (style) {
     case 'short':
     case 'pixie':
-      // Slightly lower at sides for pixie fringe
-      return <path d="M100 26 C150 26 154 58 150 72 Q132 68 100 66 Q68 68 50 72 C46 58 50 26 100 26Z" fill={color}/>
+      return <path d="M100 28 C150 28 155 58 151 72 Q132 68 100 66 Q68 68 49 72 C45 58 50 28 100 28Z" fill={color}/>
 
     case 'medium':
     case 'bob':
@@ -284,7 +265,6 @@ const HairFront = ({ style, color }) => {
       return <path d={cap} fill={color}/>
 
     case 'curly':
-      // Big top puff + cap
       return <>
         <ellipse cx="100" cy="42" rx="66" ry="44" fill={color}/>
         <path d={cap} fill={color}/>
@@ -298,39 +278,30 @@ const HairFront = ({ style, color }) => {
         <path d="M78 10 Q100 20 122 10" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" strokeLinecap="round"/>
       </>
 
-    // ── Male styles ──────────────────────────────────────────
     case 'buzz':
-      // Very close crop — thin dark cap
-      return <path d="M100 26 C146 26 149 50 145 60 Q128 57 100 56 Q72 57 55 60 C51 50 54 26 100 26Z" fill={color} opacity="0.9"/>
+      return <path d="M100 28 C146 28 148 50 145 60 Q128 57 100 56 Q72 57 55 60 C52 50 54 28 100 28Z" fill={color} opacity="0.9"/>
 
     case 'crop':
-      // Short with a textured fringe
       return <>
-        <path d="M100 26 C148 26 151 54 147 66 Q130 62 100 61 Q70 62 53 66 C49 54 52 26 100 26Z" fill={color}/>
-        {/* Fringe texture strokes */}
-        <path d="M68 66 Q78 70 88 67" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M88 67 Q100 71 112 67" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M112 67 Q122 70 132 66" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M100 28 C148 28 151 54 147 66 Q130 62 100 61 Q70 62 53 66 C49 54 52 28 100 28Z" fill={color}/>
+        <path d="M68 66 Q78 70 88 67" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"/>
+        <path d="M88 67 Q100 71 112 67" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"/>
+        <path d="M112 67 Q122 70 132 66" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"/>
       </>
 
     case 'quiff':
-      // Cap + swept-up front volume
       return <>
-        <path d="M100 26 C150 26 154 57 150 70 Q132 66 100 65 Q68 66 50 70 C46 57 50 26 100 26Z" fill={color}/>
-        {/* Quiff rise — swept up from forehead */}
+        <path d="M100 28 C150 28 154 57 150 70 Q132 66 100 65 Q68 66 50 70 C46 57 50 28 100 28Z" fill={color}/>
         <path d="M78 66 Q88 54 100 50 Q112 54 122 66" fill={color}/>
         <path d="M82 64 Q92 50 100 47 Q108 50 118 64" fill={color}/>
       </>
 
     case 'undercut':
-      // Cap with side-part line for that clean undercut look
       return <>
-        <path d="M100 26 C148 26 152 56 148 68 Q130 64 100 63 Q70 64 52 68 C48 56 52 26 100 26Z" fill={color}/>
-        {/* Side part — left of center */}
-        <path d="M78 30 Q74 46 72 66" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" strokeLinecap="round"/>
-        {/* Slight texture lines */}
-        <path d="M80 50 Q86 48 94 50" fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="1.2" strokeLinecap="round"/>
-        <path d="M80 57 Q86 55 94 57" fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M100 28 C148 28 152 56 148 68 Q130 64 100 63 Q70 64 52 68 C48 56 52 28 100 28Z" fill={color}/>
+        <path d="M76 30 Q72 46 70 66" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M80 50 Q86 48 94 50" fill="none" stroke="rgba(0,0,0,0.09)" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M80 57 Q86 55 94 57" fill="none" stroke="rgba(0,0,0,0.09)" strokeWidth="1.2" strokeLinecap="round"/>
       </>
 
     default: return null
