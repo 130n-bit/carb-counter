@@ -15,6 +15,20 @@ Rules:
 - product_name only if clearly visible; otherwise null.
 - Values are plain numbers only — no units.`
 
+// Read and parse the request body manually — Vercel doesn't always auto-parse large JSON bodies
+async function readBody(req) {
+  if (req.body && typeof req.body === 'object') return req.body
+  return new Promise((resolve, reject) => {
+    let raw = ''
+    req.on('data', chunk => { raw += chunk })
+    req.on('end', () => {
+      try { resolve(JSON.parse(raw)) }
+      catch { reject(new Error('Invalid JSON body')) }
+    })
+    req.on('error', reject)
+  })
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -23,37 +37,50 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set on server' })
+  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured on server' })
 
-  const { imageData, mediaType } = req.body || {}
-  if (!imageData || !mediaType) return res.status(400).json({ error: 'Missing imageData or mediaType' })
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 300,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
-          { type: 'text', text: PROMPT },
-        ],
-      }],
-    }),
-  })
-
-  if (!response.ok) {
-    const body = await response.text()
-    return res.status(502).json({ error: 'Claude API error', detail: body })
+  let body
+  try {
+    body = await readBody(req)
+  } catch (err) {
+    return res.status(400).json({ error: 'Could not parse request body: ' + err.message })
   }
 
-  const data = await response.json()
+  const { imageData, mediaType } = body || {}
+  if (!imageData) return res.status(400).json({ error: 'Missing imageData' })
+  if (!mediaType)  return res.status(400).json({ error: 'Missing mediaType' })
+
+  let anthropicRes
+  try {
+    anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
+            { type: 'text', text: PROMPT },
+          ],
+        }],
+      }),
+    })
+  } catch (err) {
+    return res.status(502).json({ error: 'Failed to reach Anthropic API: ' + err.message })
+  }
+
+  if (!anthropicRes.ok) {
+    const detail = await anthropicRes.text().catch(() => '')
+    return res.status(502).json({ error: 'Anthropic API returned ' + anthropicRes.status, detail })
+  }
+
+  const data = await anthropicRes.json()
   const text = data.content?.[0]?.text || ''
   return res.status(200).json({ text })
 }

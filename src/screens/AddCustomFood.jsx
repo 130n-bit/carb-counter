@@ -48,9 +48,9 @@ async function scanNutritionLabel(dataUrl) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     if (err.error?.includes('ANTHROPIC_API_KEY')) {
-      throw new Error('Label scanning is not set up yet — add the API key to your Vercel settings.')
+      throw new Error('Label scanning is not set up — add ANTHROPIC_API_KEY to Vercel environment variables.')
     }
-    throw new Error("Couldn't reach the scanning service. Try again.")
+    throw new Error(err.error || `Server error ${res.status} — try again.`)
   }
 
   const { text } = await res.json()
