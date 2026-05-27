@@ -909,6 +909,62 @@ body {
   background: var(--ink); border-color: var(--ink); color: var(--paper);
 }
 
+/* ── Barcode Scanner ───────────────────────────────── */
+.c-scanner {
+  position: absolute; inset: 0; z-index: 90;
+  background: #000; display: flex; flex-direction: column;
+}
+.c-scanner-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 16px 12px; background: rgba(0,0,0,0.88); flex-shrink: 0;
+}
+.c-scanner-title {
+  font-family: var(--font-serif); font-size: 17px; font-weight: 700; color: #fff;
+}
+.c-scanner-title em { font-style: italic; font-weight: 400; }
+.c-back-btn--light { color: #fff; }
+.c-scanner-body { flex: 1; position: relative; overflow: hidden; }
+.c-scanner-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.c-scanner-vf {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+}
+.c-scanner-vf-box {
+  width: 260px; height: 150px; border: 2px solid rgba(255,255,255,0.85); border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.42); position: relative; overflow: hidden;
+}
+.c-scanner-vf-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #4a90d9 50%, transparent);
+  animation: scanner-sweep 1.6s ease-in-out infinite;
+}
+@keyframes scanner-sweep {
+  0%   { top: 8px; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { top: calc(100% - 10px); opacity: 0; }
+}
+.c-scanner-hint { color: rgba(255,255,255,0.8); font-size: 13px; font-family: var(--font-sans); font-weight: 500; }
+.c-scanner-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.72);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px;
+}
+.c-scanner-overlay--solid { background: #111; }
+.c-scanner-status { color: #fff; font-size: 15px; font-family: var(--font-sans); text-align: center; line-height: 1.5; }
+.c-scanner-status--warn { color: #fbbf24; }
+.c-scanner-status--err  { color: #f87171; }
+.c-scanner-sub { color: rgba(255,255,255,0.5); font-size: 13px; font-family: var(--font-sans); text-align: center; line-height: 1.5; }
+.c-scanner-btn {
+  margin-top: 8px; padding: 10px 28px; background: #fff; color: #111;
+  border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+}
+.c-scanner-spinner {
+  width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: #fff; border-radius: 50%; animation: c-spin 0.8s linear infinite;
+}
+@keyframes c-spin { to { transform: rotate(360deg); } }
+
 /* Animations */
 @keyframes c-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes c-slide-up { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

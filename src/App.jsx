@@ -7,6 +7,7 @@ import { AddCustomFood } from './screens/AddCustomFood.jsx'
 import { Insights } from './screens/Insights.jsx'
 import { You } from './screens/You.jsx'
 import { AvatarEditor } from './screens/AvatarEditor.jsx'
+import { BarcodeScanner } from './components/BarcodeScanner.jsx'
 import {
   MEAL_GLYPH, MEAL_TONE,
   loadCustomFoods, saveCustomFoods,
@@ -56,6 +57,7 @@ export default function App() {
   const [favourites, setFavourites] = useState(() => loadFavourites())
   const [settings, setSettings] = useState(() => loadSettings())
   const [editingAvatar, setEditingAvatar] = useState(false)
+  const [showScanner, setShowScanner] = useState(false)
 
   // Persist meals whenever they change
   useEffect(() => {
@@ -87,9 +89,13 @@ export default function App() {
 
   const todayTotal = meals.reduce((a, m) => a + m.items.reduce((x, y) => x + y.carbs, 0), 0)
 
-  const openSearch = () => {
-    setAddFocus(true)
-    setTab('add')
+  const openSearch = (mode) => {
+    if (mode === 'scan') {
+      setShowScanner(true)
+    } else {
+      setAddFocus(true)
+      setTab('add')
+    }
   }
 
   const handlePickFood = (food) => setSheetFood(food)
@@ -186,7 +192,8 @@ export default function App() {
             customFoods={customFoods}
             favourites={favourites}
             onAddByHand={handleAddByHand}
-            onToggleFav={handleToggleFav}/>
+            onToggleFav={handleToggleFav}
+            onScanTap={() => setShowScanner(true)}/>
         )}
 
         {tab === 'insights' && (
@@ -196,6 +203,16 @@ export default function App() {
         {tab === 'you' && (
           <You settings={settings} onSave={handleSaveSettings}
                onEditAvatar={() => setEditingAvatar(true)}/>
+        )}
+
+        {showScanner && (
+          <BarcodeScanner
+            onClose={() => setShowScanner(false)}
+            onFound={(food) => {
+              setShowScanner(false)
+              setSheetFood(food)
+            }}
+          />
         )}
 
         {editingAvatar && (

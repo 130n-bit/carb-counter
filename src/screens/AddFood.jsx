@@ -4,7 +4,7 @@ import { FoodImage } from '../components/FoodImage.jsx'
 import { useFoodSearch } from '../hooks/useFoodSearch.js'
 import { QUICK_FOODS } from '../data.js'
 
-export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFoods = [], favourites = [], onAddByHand, onToggleFav }) => {
+export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFoods = [], favourites = [], onAddByHand, onToggleFav, onScanTap }) => {
   const [query, setQuery] = useState('')
   const inputRef = useRef(null)
 
@@ -78,7 +78,7 @@ export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFood
       {!query && (
         <>
           <div className="c-input-tools">
-            <button className="c-tool">
+            <button className="c-tool" onClick={() => onScanTap && onScanTap()}>
               <div className="c-tool-icon t-sun"><Icon name="barcode" size={20}/></div>
               <div className="c-tool-label">Scan barcode</div>
             </button>
