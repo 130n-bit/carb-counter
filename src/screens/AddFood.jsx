@@ -82,10 +82,6 @@ export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFood
               <div className="c-tool-icon t-sun"><Icon name="barcode" size={20}/></div>
               <div className="c-tool-label">Scan barcode</div>
             </button>
-            <button className="c-tool">
-              <div className="c-tool-icon t-sage"><Icon name="mic" size={20}/></div>
-              <div className="c-tool-label">Voice log</div>
-            </button>
             <button className="c-tool" onClick={() => onAddByHand && onAddByHand('')}>
               <div className="c-tool-icon t-clay"><Icon name="edit" size={20}/></div>
               <div className="c-tool-label">Add by hand</div>
