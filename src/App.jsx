@@ -11,6 +11,7 @@ import {
   loadCustomFoods, saveCustomFoods,
   loadHistory, loadTodayMeals, saveTodayMeals,
   loadFavourites, saveFavourites,
+  loadSettings, saveSettings,
 } from './data.js'
 
 const TabBar = ({ tab, onTab }) => {
@@ -52,12 +53,28 @@ export default function App() {
   const [customFoodScreen, setCustomFoodScreen] = useState(null) // null | { initialName }
   const [customFoods, setCustomFoods] = useState(() => loadCustomFoods())
   const [favourites, setFavourites] = useState(() => loadFavourites())
+  const [settings, setSettings] = useState(() => loadSettings())
 
   // Persist meals whenever they change
   useEffect(() => {
     saveTodayMeals(meals)
     setHistory(loadHistory())
   }, [meals])
+
+  // Apply dark mode to html element
+  useEffect(() => {
+    if (settings.darkMode) {
+      document.documentElement.setAttribute('data-dark', 'true')
+    } else {
+      document.documentElement.removeAttribute('data-dark')
+    }
+  }, [settings.darkMode])
+
+  const handleSaveSettings = (updates) => {
+    const updated = { ...settings, ...updates }
+    setSettings(updated)
+    saveSettings(updated)
+  }
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -146,7 +163,7 @@ export default function App() {
     <div className="app-shell">
       <div className="crumb">
         {tab === 'today' && !customFoodScreen && (
-          <Today meals={meals} tweaks={tweaks}
+          <Today meals={meals} tweaks={tweaks} settings={settings}
                  onSearchTap={openSearch}
                  onPickQuick={handlePickQuick}/>
         )}
@@ -175,7 +192,7 @@ export default function App() {
         )}
 
         {tab === 'you' && (
-          <You/>
+          <You settings={settings} onSave={handleSaveSettings}/>
         )}
 
         {toast && <Toast message={toast.message} onUndo={handleUndo}/>}

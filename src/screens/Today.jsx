@@ -120,7 +120,7 @@ const MealCard = ({ meal, unit }) => {
   )
 }
 
-export const Today = ({ meals, tweaks, onSearchTap, onPickQuick }) => {
+export const Today = ({ meals, tweaks, settings, onSearchTap, onPickQuick }) => {
   const total = meals.reduce((a, m) => a + m.items.reduce((x, y) => x + y.carbs, 0), 0)
   const now = new Date()
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
@@ -135,7 +135,11 @@ export const Today = ({ meals, tweaks, onSearchTap, onPickQuick }) => {
     <div className="crumb-scroll">
       <div className="c-header">
         <div>
-          <div className="c-greeting">Good day. <em>{days[now.getDay()]}.</em></div>
+          <div className="c-greeting">
+            {settings?.name?.trim()
+              ? <>Good day, <em>{settings.name.trim()}.</em></>
+              : <>Good day. <em>{days[now.getDay()]}.</em></>}
+          </div>
           <div className="c-date">{dateStr}</div>
         </div>
         <div className="c-avatar">C</div>

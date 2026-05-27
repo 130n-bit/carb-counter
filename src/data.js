@@ -162,3 +162,19 @@ export const loadFavourites = () => {
 export const saveFavourites = (favs) => {
   try { localStorage.setItem(FAVS_KEY, JSON.stringify(favs)) } catch {}
 }
+
+// --- Settings ---
+
+const SETTINGS_KEY = 'crumb.settings'
+
+export const loadSettings = () => {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw) || {}
+  } catch { return {} }
+}
+
+export const saveSettings = (s) => {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)) } catch {}
+}
