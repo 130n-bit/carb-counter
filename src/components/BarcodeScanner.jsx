@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { BrowserMultiFormatReader } from '@zxing/browser'
 import { Icon } from './Icons.jsx'
 import { offProductToFood } from '../hooks/useFoodSearch.js'
 
@@ -14,104 +15,66 @@ async function lookupBarcode(barcode) {
 
 export const BarcodeScanner = ({ onFound, onClose }) => {
   const videoRef    = useRef(null)
-  const streamRef   = useRef(null)
-  const rafRef      = useRef(null)
-  const detectorRef = useRef(null)
-  const activeRef   = useRef(false)
+  const controlsRef = useRef(null)
+  const handledRef  = useRef(false)
 
-  const [phase, setPhase]   = useState('starting') // starting|scanning|looking|notfound|error|unsupported
+  const [phase, setPhase]   = useState('starting') // starting|scanning|looking|notfound|error
   const [errMsg, setErrMsg] = useState('')
 
-  const stopStream = () => {
-    activeRef.current = false
-    if (rafRef.current)   { cancelAnimationFrame(rafRef.current); rafRef.current = null }
-    if (streamRef.current){ streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null }
+  const stopScanning = () => {
+    try { controlsRef.current?.stop() } catch {}
+    controlsRef.current = null
   }
 
-  const startLoop = () => {
-    activeRef.current = true
+  const startScanning = async () => {
+    handledRef.current = false
     setPhase('scanning')
 
-    const tick = async () => {
-      if (!activeRef.current) return
-      const v = videoRef.current
-      if (v && v.readyState >= 2 && v.videoWidth > 0) {
-        try {
-          const codes = await detectorRef.current.detect(v)
-          if (codes.length > 0 && activeRef.current) {
-            activeRef.current = false
-            setPhase('looking')
-            try {
-              const food = await lookupBarcode(codes[0].rawValue)
-              if (food) {
-                stopStream()
-                onFound(food)
-              } else {
-                setPhase('notfound')
-              }
-            } catch {
-              setPhase('error')
-              setErrMsg("Couldn't reach the food database. Check your connection.")
+    const reader = new BrowserMultiFormatReader()
+    try {
+      const controls = await reader.decodeFromConstraints(
+        { video: { facingMode: 'environment' } },
+        videoRef.current,
+        async (result, err) => {
+          if (!result || handledRef.current) return
+          handledRef.current = true
+          stopScanning()
+          setPhase('looking')
+          try {
+            const food = await lookupBarcode(result.getText())
+            if (food) {
+              onFound(food)
+            } else {
+              setPhase('notfound')
             }
-            return
+          } catch {
+            setErrMsg("Couldn't reach the food database. Check your connection.")
+            setPhase('error')
           }
-        } catch { /* detection hiccup — keep going */ }
-      }
-      rafRef.current = requestAnimationFrame(tick)
+        }
+      )
+      controlsRef.current = controls
+    } catch (err) {
+      setErrMsg(
+        err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError'
+          ? 'Camera access was denied. Please allow camera permission in your browser settings and try again.'
+          : 'Could not start the camera. ' + (err.message || '')
+      )
+      setPhase('error')
     }
-
-    rafRef.current = requestAnimationFrame(tick)
-  }
-
-  const retry = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    startLoop()
   }
 
   useEffect(() => {
-    let cancelled = false
-
-    ;(async () => {
-      if (!('BarcodeDetector' in window)) {
-        setPhase('unsupported'); return
-      }
-
-      let formats = ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code']
-      try {
-        const supported = await BarcodeDetector.getSupportedFormats()
-        const filtered  = formats.filter(f => supported.includes(f))
-        if (filtered.length) formats = filtered
-      } catch { /* use default list */ }
-
-      detectorRef.current = new BarcodeDetector({ formats })
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }
-        })
-        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return }
-
-        streamRef.current = stream
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          videoRef.current.play().catch(() => {})
-        }
-        startLoop()
-      } catch (err) {
-        if (cancelled) return
-        setErrMsg(
-          err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError'
-            ? 'Camera access was denied. Please allow camera permission and try again.'
-            : 'Could not start the camera. ' + (err.message || '')
-        )
-        setPhase('error')
-      }
-    })()
-
-    return () => { cancelled = true; stopStream() }
+    startScanning()
+    return () => stopScanning()
   }, [])
 
-  const close = () => { stopStream(); onClose() }
+  const retry = () => {
+    setPhase('starting')
+    startScanning()
+  }
+
+  const close = () => { stopScanning(); onClose() }
 
   return (
     <div className="c-scanner">
@@ -157,15 +120,10 @@ export const BarcodeScanner = ({ onFound, onClose }) => {
           </div>
         )}
 
-        {(phase === 'starting' || phase === 'unsupported') && (
+        {phase === 'starting' && (
           <div className="c-scanner-overlay c-scanner-overlay--solid">
-            {phase === 'starting' ? <>
-              <div className="c-scanner-spinner"/>
-              <div className="c-scanner-status">Starting camera…</div>
-            </> : <>
-              <div className="c-scanner-status">Barcode scanning isn't supported on this browser.</div>
-              <div className="c-scanner-sub">Update to the latest Safari or Chrome and try again.</div>
-            </>}
+            <div className="c-scanner-spinner"/>
+            <div className="c-scanner-status">Starting camera…</div>
           </div>
         )}
       </div>
