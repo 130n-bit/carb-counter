@@ -7,7 +7,7 @@ import { AddCustomFood } from './screens/AddCustomFood.jsx'
 import { Insights } from './screens/Insights.jsx'
 import { You } from './screens/You.jsx'
 import {
-  SEED_MEALS, MEAL_GLYPH, MEAL_TONE,
+  MEAL_GLYPH, MEAL_TONE,
   loadCustomFoods, saveCustomFoods,
   loadHistory, loadTodayMeals, saveTodayMeals,
   loadFavourites, saveFavourites,
@@ -44,7 +44,7 @@ const Toast = ({ message, onUndo }) => (
 
 export default function App() {
   const [tab, setTab] = useState('today')
-  const [meals, setMeals] = useState(() => loadTodayMeals() || SEED_MEALS)
+  const [meals, setMeals] = useState(() => loadTodayMeals() || [])
   const [history, setHistory] = useState(() => loadHistory())
   const [sheetFood, setSheetFood] = useState(null)
   const [toast, setToast] = useState(null)
