@@ -1,4 +1,5 @@
 import { Icon } from '../components/Icons.jsx'
+import { AvatarSvg } from '../components/AvatarSvg.jsx'
 
 const Toggle = ({ on, onClick }) => (
   <div className={`c-toggle ${on ? 'is-on' : ''}`} onClick={onClick}
@@ -8,7 +9,7 @@ const Toggle = ({ on, onClick }) => (
 
 const DIABETES_TYPES = ['Type 1', 'Type 2', 'Gestational', 'Other']
 
-export const You = ({ settings, onSave }) => {
+export const You = ({ settings, onSave, onEditAvatar }) => {
   const update = (key, val) => onSave({ [key]: val })
   const name = settings.name?.trim() || ''
   const initial = name[0]?.toUpperCase() || 'C'
@@ -23,12 +24,23 @@ export const You = ({ settings, onSave }) => {
       </div>
 
       <div className="c-profile">
-        <div className="c-profile-avatar">{initial}</div>
-        <div>
+        <div className="c-profile-avatar-wrap" onClick={onEditAvatar}>
+          {settings.avatar
+            ? <AvatarSvg avatar={settings.avatar} width={64} bust/>
+            : <div className="c-profile-avatar">{initial}</div>
+          }
+          <div className="c-profile-avatar-badge">
+            <Icon name="edit" size={11}/>
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
           <div className="c-profile-name">{name || 'Crumb User'}</div>
           <div className="c-profile-sub">
             {settings.diabetesType ? `${settings.diabetesType} diabetes` : 'Counting carbs'}
           </div>
+          <button className="c-profile-customise" onClick={onEditAvatar}>
+            Customise avatar
+          </button>
         </div>
       </div>
 

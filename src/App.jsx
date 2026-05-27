@@ -6,6 +6,7 @@ import { AddFood } from './screens/AddFood.jsx'
 import { AddCustomFood } from './screens/AddCustomFood.jsx'
 import { Insights } from './screens/Insights.jsx'
 import { You } from './screens/You.jsx'
+import { AvatarEditor } from './screens/AvatarEditor.jsx'
 import {
   MEAL_GLYPH, MEAL_TONE,
   loadCustomFoods, saveCustomFoods,
@@ -54,6 +55,7 @@ export default function App() {
   const [customFoods, setCustomFoods] = useState(() => loadCustomFoods())
   const [favourites, setFavourites] = useState(() => loadFavourites())
   const [settings, setSettings] = useState(() => loadSettings())
+  const [editingAvatar, setEditingAvatar] = useState(false)
 
   // Persist meals whenever they change
   useEffect(() => {
@@ -192,7 +194,19 @@ export default function App() {
         )}
 
         {tab === 'you' && (
-          <You settings={settings} onSave={handleSaveSettings}/>
+          <You settings={settings} onSave={handleSaveSettings}
+               onEditAvatar={() => setEditingAvatar(true)}/>
+        )}
+
+        {editingAvatar && (
+          <AvatarEditor
+            avatar={settings.avatar}
+            onClose={() => setEditingAvatar(false)}
+            onSave={(avatar) => {
+              handleSaveSettings({ avatar })
+              setEditingAvatar(false)
+            }}
+          />
         )}
 
         {toast && <Toast message={toast.message} onUndo={handleUndo}/>}

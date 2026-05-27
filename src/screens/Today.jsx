@@ -1,5 +1,6 @@
 import { Icon } from '../components/Icons.jsx'
 import { QUICK_FOODS, RECENT_TOTALS } from '../data.js'
+import { AvatarSvg } from '../components/AvatarSvg.jsx'
 
 const TYPICAL_BY_HOUR = 125
 
@@ -142,7 +143,10 @@ export const Today = ({ meals, tweaks, settings, onSearchTap, onPickQuick }) => 
           </div>
           <div className="c-date">{dateStr}</div>
         </div>
-        <div className="c-avatar">C</div>
+        {settings?.avatar
+          ? <div className="c-avatar c-avatar--fig"><AvatarSvg avatar={settings.avatar} width={40} bust/></div>
+          : <div className="c-avatar">{settings?.name?.trim()?.[0]?.toUpperCase() || 'C'}</div>
+        }
       </div>
 
       <HeroCarbs total={total} meals={meals}
