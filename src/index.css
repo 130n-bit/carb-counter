@@ -885,6 +885,18 @@ body {
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
 }
 
+.c-aved-gender-row { display: flex; gap: 8px; margin-bottom: 4px; }
+.c-aved-gender-btn {
+  flex: 1; padding: 10px 0; border-radius: 12px;
+  background: var(--paper-deep); border: 1.5px solid var(--stone-200);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+  color: var(--stone-600); cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+}
+.c-aved-gender-btn.is-active {
+  background: var(--ink); border-color: var(--ink); color: var(--paper);
+}
+
 .c-aved-opts { display: flex; gap: 6px; flex-wrap: wrap; }
 .c-aved-opt {
   padding: 8px 14px; border-radius: 999px;

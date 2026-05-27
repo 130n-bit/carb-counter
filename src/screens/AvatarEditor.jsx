@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Icon } from '../components/Icons.jsx'
 import {
   AvatarSvg, AVATAR_DEFAULTS,
-  SKIN_TONES, HAIR_COLORS, HAIR_STYLE_LABELS,
-  TOP_COLORS, TOP_STYLE_LABELS, BOTTOM_COLORS,
+  SKIN_TONES, EYE_COLORS, HAIR_COLORS, HAIR_STYLE_LABELS,
+  TOP_COLORS, TOP_STYLE_LABELS, BOTTOM_COLORS, GENDERS,
 } from '../components/AvatarSvg.jsx'
 
 const Swatch = ({ color, selected, onClick, light }) => (
@@ -56,11 +56,28 @@ export const AvatarEditor = ({ avatar, onSave, onClose }) => {
           {/* ── Skin ── */}
           {tab === 'skin' && (
             <div>
+              <div className="c-aved-label">Gender</div>
+              <div className="c-aved-gender-row">
+                {GENDERS.map(g => (
+                  <button key={g}
+                          className={`c-aved-gender-btn ${val('gender') === g ? 'is-active' : ''}`}
+                          onClick={() => update('gender', g)}>
+                    {g === 'female' ? 'Female' : 'Male'}
+                  </button>
+                ))}
+              </div>
               <div className="c-aved-label">Skin tone</div>
               <div className="c-aved-swatches">
                 {SKIN_TONES.map(c => (
                   <Swatch key={c} color={c} selected={val('skinTone') === c}
                           onClick={() => update('skinTone', c)}/>
+                ))}
+              </div>
+              <div className="c-aved-label">Eye colour</div>
+              <div className="c-aved-swatches">
+                {EYE_COLORS.map(c => (
+                  <Swatch key={c} color={c} selected={val('eyeColor') === c}
+                          onClick={() => update('eyeColor', c)}/>
                 ))}
               </div>
             </div>
@@ -83,7 +100,7 @@ export const AvatarEditor = ({ avatar, onSave, onClose }) => {
               <div className="c-aved-swatches">
                 {HAIR_COLORS.map(c => (
                   <Swatch key={c} color={c} selected={val('hairColor') === c}
-                          light={c === '#f0f0f0' || c === '#c8c8c8'}
+                          light={c === '#f4f4f4' || c === '#c8c8c8' || c === '#e0c060'}
                           onClick={() => update('hairColor', c)}/>
                 ))}
               </div>
