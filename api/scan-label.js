@@ -1,3 +1,7 @@
+// CommonJS — avoids ESM compatibility issues with Vercel's function runtime
+// Uses Node's built-in https module — no external dependencies required
+const https = require('https')
+
 const PROMPT = `You are reading a UK or international food nutrition label.
 
 Return ONLY a JSON object (no prose, no markdown, no code fence) with this exact shape:
@@ -15,72 +19,93 @@ Rules:
 - product_name only if clearly visible; otherwise null.
 - Values are plain numbers only — no units.`
 
-// Read and parse the request body manually — Vercel doesn't always auto-parse large JSON bodies
-async function readBody(req) {
-  if (req.body && typeof req.body === 'object') return req.body
+function readBody(req) {
   return new Promise((resolve, reject) => {
+    if (req.body && typeof req.body === 'object') return resolve(req.body)
     let raw = ''
-    req.on('data', chunk => { raw += chunk })
+    req.on('data', chunk => { raw += chunk.toString() })
     req.on('end', () => {
       try { resolve(JSON.parse(raw)) }
-      catch { reject(new Error('Invalid JSON body')) }
+      catch (e) { reject(new Error('Invalid JSON body')) }
     })
     req.on('error', reject)
   })
 }
 
-export default async function handler(req, res) {
+function httpsPost(options, body) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, res => {
+      let data = ''
+      res.on('data', chunk => { data += chunk })
+      res.on('end', () => resolve({ status: res.statusCode, body: data }))
+    })
+    req.on('error', reject)
+    req.write(body)
+    req.end()
+  })
+}
+
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-  if (req.method === 'OPTIONS') return res.status(200).end()
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+  if (req.method === 'OPTIONS') { res.status(200).end(); return }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured on server' })
+  if (!apiKey) { res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured on server' }); return }
 
   let body
   try {
     body = await readBody(req)
   } catch (err) {
-    return res.status(400).json({ error: 'Could not parse request body: ' + err.message })
+    res.status(400).json({ error: 'Could not parse request body: ' + err.message })
+    return
   }
 
   const { imageData, mediaType } = body || {}
-  if (!imageData) return res.status(400).json({ error: 'Missing imageData' })
-  if (!mediaType)  return res.status(400).json({ error: 'Missing mediaType' })
+  if (!imageData) { res.status(400).json({ error: 'Missing imageData' }); return }
+  if (!mediaType)  { res.status(400).json({ error: 'Missing mediaType'  }); return }
 
-  let anthropicRes
+  const payload = JSON.stringify({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 300,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
+        { type: 'text', text: PROMPT },
+      ],
+    }],
+  })
+
+  let result
   try {
-    anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+    result = await httpsPost({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
-            { type: 'text', text: PROMPT },
-          ],
-        }],
-      }),
-    })
+    }, payload)
   } catch (err) {
-    return res.status(502).json({ error: 'Failed to reach Anthropic API: ' + err.message })
+    res.status(502).json({ error: 'Network error reaching Anthropic: ' + err.message })
+    return
   }
 
-  if (!anthropicRes.ok) {
-    const detail = await anthropicRes.text().catch(() => '')
-    return res.status(502).json({ error: 'Anthropic API returned ' + anthropicRes.status, detail })
+  if (result.status !== 200) {
+    res.status(502).json({ error: 'Anthropic API returned ' + result.status, detail: result.body.slice(0, 300) })
+    return
   }
 
-  const data = await anthropicRes.json()
-  const text = data.content?.[0]?.text || ''
-  return res.status(200).json({ text })
+  let parsed
+  try { parsed = JSON.parse(result.body) }
+  catch { res.status(502).json({ error: 'Unexpected response from Anthropic API' }); return }
+
+  const text = parsed.content?.[0]?.text || ''
+  res.status(200).json({ text })
 }
