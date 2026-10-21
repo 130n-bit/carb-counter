@@ -163,6 +163,37 @@ export const saveFavourites = (favs) => {
   try { localStorage.setItem(FAVS_KEY, JSON.stringify(favs)) } catch {}
 }
 
+// ---Recent foods (build from history) ---
+
+export const getRecentFoods = (history, limit = 5) => {
+  const seen = new map() // id -> { food, lastUsed, count }
+
+  const dates  = Object.keys(history).sort().reverse() //newest first
+
+  for (const date of dates) {
+    const meals = history[date] || []
+    for (const meal of meals) {
+      for (const item of meal.items || []) {
+        if (!item.food || !item.food.id) continue // skip old-format entires with no food ref
+        const id = item.food.idif (seen.has(id)) {
+          seen.get(id).count +=1
+        } else {
+          seen.set(id, { food: item.food, lastUsed: date, count:1})
+        }
+      }
+    }  
+  }
+
+ reurn Array.from(seen.values())
+ .sort((a,b) => {
+  // most recent date wins first, ties broken by frequency
+  if (a.lastUsed !== b.lastUsed) return a.lastUsed < b.lastUsed ? 1 : -1
+  return b.count - a.count
+ })
+ .slice(0, limit)
+ .map(entry =>entry.food)
+}
+
 // --- Settings ---
 
 const SETTINGS_KEY = 'crumb.settings'

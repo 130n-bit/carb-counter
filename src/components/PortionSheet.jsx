@@ -41,6 +41,7 @@ export const PortionSheet = ({ food, onCancel, onSave }) => {
       portion,
       carbs: totalCarbs,
       meal: MEAL_CHOICES.find(m => m.id === meal).label,
+      food, // the fulol food object, so "Recent" can rebuild it later
     })
   }
 

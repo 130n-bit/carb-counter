@@ -4,8 +4,8 @@ import { FoodImage } from '../components/FoodImage.jsx'
 import { useFoodSearch } from '../hooks/useFoodSearch.js'
 import { QUICK_FOODS } from '../data.js'
 
-export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFoods = [], favourites = [], onAddByHand, onToggleFav, onScanTap }) => {
-  const [query, setQuery] = useState('')
+export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFoods = [], favourites = [], recentFoods = [], onAddByHand, onToggleFav, onScanTap }) => {
+  constS [query, setQuery] = useState('')
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -141,25 +141,30 @@ export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFood
             </>
           )}
 
-          <div className="c-section-head" style={{ marginTop: (favourites.length || customFoods.length) ? 16 : 0 }}>
-            <h3 className="c-section-title">Often, recently</h3>
-            <span className="c-section-action" onClick={() => onAddByHand && onAddByHand('')}>
-              <Icon name="plus" size={12}/> Add by hand
-            </span>
-          </div>
-          {QUICK_FOODS.map(f => (
-            <div key={f.id} className="c-result" onClick={() => onPickQuick(f)}>
-              <FoodImage image={f.image} glyph={f.glyph} size={40} radius={12}/>
-              <div className="c-result-body">
-                <div className="c-result-name">{f.name}</div>
-                <div className="c-result-sub">{f.units[f.defaultUnit]}</div>
-              </div>
-              <div className="c-result-carbs">
-                <span className="c-result-carbs-num">{f.carbs}</span>
-                <span className="c-result-carbs-unit">g</span>
-              </div>
-            </div>
-          ))}
+         {recentFoods.length > 0 ? (
+  <>
+    <div className="c-section-head" style={{ marginTop: (favourites.length || customFoods.length) ? 16 : 0 }}>
+      <h3 className="c-section-title">Recent</h3>
+    </div>
+    {recentFoods.map(f => (
+      <div key={f.id} className="c-result" onClick={() => onPickQuick(f)}>
+        <FoodImage image={f.image} glyph={f.glyph} size={40} radius={12}/>
+        <div className="c-result-body">
+          <div className="c-result-name">{f.name}</div>
+          <div className="c-result-sub">{f.sub} · {f.units[f.defaultUnit ?? 0]}</div>
+        </div>
+        <div className="c-result-carbs">
+          <span className="c-result-carbs-num">{f.base ?? f.carbs}</span>
+          <span className="c-result-carbs-unit">g</span>
+        </div>
+      </div>
+    ))}
+  </>
+) : (
+  <div style={{ textAlign: 'center', padding: '24px 20px', color: 'var(--stone-600)', fontSize: 14 }}>
+    Log a few foods and they'll show up here.
+  </div>
+)}
 
           <div className="c-add-attrib">
             Searching pulls live results from <em>OpenFoodFacts</em>, a community-built food database.

@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { Icon } from './components/Icons.jsx'
 import { PortionSheet } from './components/PortionSheet.jsx'
 import { Today } from './screens/Today.jsx'
+import { getRecentFoods } from './data.js'
+// ...
+const recentFoods = getRecentFoods(history)
 import { AddFood } from './screens/AddFood.jsx'
 import { AddCustomFood } from './screens/AddCustomFood.jsx'
 import { Insights } from './screens/Insights.jsx'
@@ -110,7 +113,11 @@ export default function App() {
       const ampm = hh >= 12 ? 'pm' : 'am'
       const h12 = hh % 12 === 0 ? 12 : hh % 12
       const timeStr = `${h12}:${mm} ${ampm}`
-      const newItem = { name: `${entry.foodName}, ${entry.portion}`, carbs: entry.carbs }
+      const newItem = {
+        name: '${entry.foodName}, ${entry.portion}',
+        carbs: entry.carbs,
+        food: entry.food, // full food object, so it cn=an be re-logged from "recent"
+      }
       if (existing) {
         return prev.map(m => m === existing
           ? { ...m, items: [...m.items, newItem] }
