@@ -166,7 +166,7 @@ export const saveFavourites = (favs) => {
 // ---Recent foods (build from history) ---
 
 export const getRecentFoods = (history, limit = 5) => {
-  const seen = new map() // id -> { food, lastUsed, count }
+  const seen = new Map() // id -> { food, lastUsed, count }
 
   const dates  = Object.keys(history).sort().reverse() //newest first
 
