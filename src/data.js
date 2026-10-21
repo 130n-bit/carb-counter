@@ -185,7 +185,7 @@ export const getRecentFoods = (history, limit = 5) => {
     }  
   }
 
- reurn Array.from(seen.values())
+ return Array.from(seen.values())
  .sort((a,b) => {
   // most recent date wins first, ties broken by frequency
   if (a.lastUsed !== b.lastUsed) return a.lastUsed < b.lastUsed ? 1 : -1
