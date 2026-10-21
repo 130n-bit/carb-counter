@@ -175,7 +175,8 @@ export const getRecentFoods = (history, limit = 5) => {
     for (const meal of meals) {
       for (const item of meal.items || []) {
         if (!item.food || !item.food.id) continue // skip old-format entires with no food ref
-        const id = item.food.idif (seen.has(id)) {
+        const id = item.food.id
+        if (seen.has(id)) {
           seen.get(id).count +=1
         } else {
           seen.set(id, { food: item.food, lastUsed: date, count:1})
