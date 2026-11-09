@@ -19,20 +19,20 @@ import {
   loadSettings, saveSettings,
 } from './data.js'
 
-const TabBar = ({ tab, onTab }) => {
+function TabBar({ tab, onTab }) {
   const tabs = [
-    { id: 'today',    label: 'Today',    icon: 'home' },
-    { id: 'add',      label: 'Add food', icon: 'plus' },
+    { id: 'today', label: 'Today', icon: 'home' },
+    { id: 'add', label: 'Add food', icon: 'plus' },
     { id: 'insights', label: 'Insights', icon: 'chart' },
-    { id: 'you',      label: 'You',      icon: 'user' },
+    { id: 'you', label: 'You', icon: 'user' },
   ]
   return (
     <div className="c-tabs">
       {tabs.map(t => (
         <button key={t.id}
-                className={`c-tab ${tab === t.id ? 'is-active' : ''}`}
-                onClick={() => onTab(t.id)}>
-          <Icon name={t.icon} size={16}/>
+          className={`c-tab ${tab === t.id ? 'is-active' : ''}`}
+          onClick={() => onTab(t.id)}>
+          <Icon name={t.icon} size={16} />
           <span>{t.label}</span>
         </button>
       ))}

@@ -5,7 +5,7 @@ import { useFoodSearch } from '../hooks/useFoodSearch.js'
 import { QUICK_FOODS } from '../data.js'
 
 export const AddFood = ({ onClose, onPick, onPickQuick, initialFocus, customFoods = [], favourites = [], recentFoods = [], onAddByHand, onToggleFav, onScanTap }) => {
-  constS [query, setQuery] = useState('')
+  const [query, setQuery] = useState('')
   const inputRef = useRef(null)
 
   useEffect(() => {
